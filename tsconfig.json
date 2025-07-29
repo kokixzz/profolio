@@ -1,0 +1,10 @@
+{
+    "compilerOptions": {
+        "target": "ES6",
+        "lib": ["ES6", "DOM"],
+        "module": "ESNext",
+        "moduleResolution": "node",
+        "outDir": "./dist",
+        "strict": true
+    }
+}

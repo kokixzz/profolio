@@ -1,0 +1,19 @@
+{
+  "name": "personal-portfolio-builder",
+  "version": "1.0.0",
+  "description": "Create stunning portfolios with zero coding",
+  "scripts": {
+    "dev": "npx tailwindcss -i ./styles/main.css -o ./styles/output.css --watch",
+    "build": "npx tailwindcss -i ./styles/main.css -o ./styles/output.css --minify"
+  },
+  "devDependencies": {
+    "@tailwindcss/forms": "^0.5.7",
+    "autoprefixer": "^10.4.16",
+    "postcss": "^8.4.33",
+    "tailwindcss": "^3.4.1"
+  },
+  "dependencies": {
+    "aos": "^2.3.4",
+    "gsap": "^3.12.4"
+  }
+}

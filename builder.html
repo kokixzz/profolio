@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portfolio Builder - ProFolio</title>
+  <link href="./styles/output.css" rel="stylesheet">
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const styleSheet = document.querySelector('link[href="./styles/output.css"]');
+      const styleSheetLoaded = styleSheet.sheet;
+      
+      if (!styleSheetLoaded) {
+        const tailwindCDN = document.createElement('link');
+        tailwindCDN.rel = 'stylesheet';
+        tailwindCDN.href = 'https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css';
+        document.head.appendChild(tailwindCDN);
+        console.log('Using Tailwind CDN instead of local stylesheet');
+      }
+    });
+  </script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" />
+  <style>
+    html, body {
+      overflow-x: hidden !important;
+      max-width: 100vw;
+      overflow-y: auto !important;
+    }
+    
+    .notification {
+      z-index: 9999;
+    }
+
+    .form-section {
+      display: none;
+      visibility: hidden;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      margin-top: 2rem !important;
+    }
+
+    #basic-info {
+      display: block !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+      position: relative !important;
+      z-index: 1 !important;
+      margin-top: 0 !important;
+      margin-bottom: 7rem !important;
+    }
+
+    input, textarea, select {
+      display: block !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+      border: 1px solid #d1d5db !important;
+      padding: 0.5rem !important;
+      width: 100% !important;
+    }
+
+    input[type="color"] {
+      height: 40px !important;
+      width: 40px !important;
+      padding: 0 !important;
+    }
+    
+    input[type="radio"], input[type="checkbox"] {
+      display: inline-block !important;
+      width: auto !important;
+    }
+
+    .form-group label {
+      display: block !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+      margin-bottom: 0.25rem !important;
+    }
+    
+    button {
+      cursor: pointer !important;
+    }
+    
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border-width: 0;
+    }
+
+    .form-group input, 
+    .form-group textarea,
+    .form-group select {
+      position: relative;
+      z-index: 99 !important;
+      background: white !important;
+      display: block !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+      min-height: 38px !important;
+    }
+
+    #basic-info .form-group input,
+    #basic-info .form-group textarea,
+    #basic-info .form-group select {
+      display: block !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+      border: 1px solid #d1d5db !important;
+    }
+
+    .form-group {
+      margin-bottom: 1rem !important;
+      position: relative !important;
+    }
+
+    .w-full {
+      width: 100% !important;
+    }
+    
+    .rounded-md {
+      border-radius: 0.375rem !important;
+    }
+
+    .text-primary {
+      color: #4F46E5;
+    }
+    
+    .bg-primary {
+      background-color: var(--accent-color) !important;
+    }
+    
+    .bg-primary\/10 {
+      background-color: rgba(79, 70, 229, 0.1);
+    }
+    
+    .hover\:bg-primary-dark:hover {
+      background-color: var(--accent-hover) !important;
+    }
+    
+    .focus\:border-primary:focus {
+      border-color: #4F46E5;
+    }
+    
+    .focus\:ring-primary:focus {
+      --tw-ring-color: #4F46E5;
+    }
+    
+    .bg-accent {
+      background-color: #F59E0B !important;
+    }
+    
+    .hover\:bg-accent-dark:hover {
+      background-color: #D97706;
+    }
+
+    :root {
+      --bg-primary: #1F2937;
+      --bg-secondary: #111827;
+      --bg-tertiary: #374151;
+      --text-primary: #F9FAFB;
+      --text-secondary: #D1D5DB;
+      --text-muted: #9CA3AF;
+      --border-color: #374151;
+      --accent-color: #4F46E5;
+      --accent-hover: #4338CA;
+      --accent-light: rgba(79, 70, 229, 0.2);
+      --danger: #EF4444;
+      --success: #10B981;
+      --card-bg: #1F2937;
+      --input-bg: #111827;
+      --input-border: #4B5563;
+      --input-text: #F3F4F6;
+      --input-focus: #4F46E5;
+    }
+
+    .light-mode {
+      --bg-primary: #F9FAFB;
+      --bg-secondary: #FFFFFF;
+      --bg-tertiary: #F3F4F6;
+      --text-primary: #1F2937;
+      --text-secondary: #4B5563;
+      --text-muted: #6B7280;
+      --border-color: #E5E7EB;
+      --card-bg: #FFFFFF;
+      --input-bg: #FFFFFF;
+      --input-border: #D1D5DB;
+      --input-text: #1F2937;
+    }
+
+    /* Apply theme styles */
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+    }
+
+    header {
+      background-color: var(--bg-secondary);
+      border-color: var(--border-color);
+    }
+
+    .text-gray-800 {
+      color: var(--text-primary) !important;
+    }
+
+    .bg-white, .form-section {
+      background-color: var(--card-bg) !important;
+    }
+
+    .text-gray-700 {
+      color: var(--text-secondary) !important;
+    }
+
+    .text-gray-600 {
+      color: var(--text-muted) !important;
+    }
+
+    .border-gray-200, .border-b {
+      border-color: var(--border-color) !important;
+    }
+
+    .bg-gray-50, .bg-gray-100, .hover\:bg-gray-100:hover {
+      background-color: var(--bg-tertiary) !important;
+    }
+
+    input, textarea, select {
+      background-color: var(--input-bg) !important;
+      border-color: var(--input-border) !important;
+      color: var(--input-text) !important;
+    }
+
+    .theme-toggle {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      z-index: 100;
+      background-color: var(--bg-tertiary);
+      padding: 0.5rem;
+      border-radius: 9999px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .theme-toggle:hover {
+      transform: scale(1.05);
+    }
+
+    .theme-toggle svg {
+      width: 1.5rem;
+      height: 1.5rem;
+      color: var(--text-primary);
+    }
+
+    input:focus, textarea:focus, select:focus {
+      border-color: var(--accent-color) !important;
+      box-shadow: 0 0 0 2px var(--accent-light) !important;
+      outline: none !important;
+    }
+
+    .form-group input, 
+    .form-group textarea,
+    .form-group select {
+      background-color: var(--input-bg) !important;
+      color: var(--input-text) !important;
+    }
+
+    ::placeholder {
+      color: var(--text-muted) !important;
+      opacity: 0.7 !important;
+    }
+
+    .bg-primary {
+      background-color: var(--accent-color) !important;
+    }
+
+    .hover\:bg-primary-dark:hover {
+      background-color: var(--accent-hover) !important;
+    }
+
+    .bg-gray-200, .hover\:bg-gray-300:hover {
+      background-color: var(--bg-tertiary) !important;
+      color: var(--text-primary) !important;
+    }
+
+    .bg-accent {
+      background-color: #F59E0B !important;
+    }
+
+    .nav-link.hover\:bg-gray-100:hover {
+      background-color: rgba(255, 255, 255, 0.1) !important;
+    }
+
+    .skill-chip {
+      background-color: var(--accent-light) !important;
+      color: var(--text-primary) !important;
+    }
+
+    .experience-entry, .education-entry, .project-entry {
+      background-color: var(--bg-secondary) !important;
+      border-color: var(--border-color) !important;
+    }
+
+    @media (max-width: 640px) {
+      .theme-toggle {
+        position: absolute;
+        top: 1rem;
+        right: 4rem;
+      }
+    }
+
+    input[type="color"] {
+      background-color: transparent !important;
+      border: 2px solid var(--input-border) !important;
+    }
+
+    label {
+      color: var(--text-secondary) !important;
+    }
+
+    .peer-checked\:border-primary:checked {
+      border-color: var(--accent-color) !important;
+    }
+
+    .peer-checked\:bg-primary\/5:checked {
+      background-color: var(--accent-light) !important;
+    }
+
+    #previewModal .bg-white {
+      background-color: var(--bg-secondary) !important;
+    }
+
+    #previewModal .border-b {
+      border-color: var(--border-color) !important;
+    }
+
+    #previewModal .text-gray-500 {
+      color: var(--text-secondary) !important;
+    }
+
+    #previewModal .bg-gray-50 {
+      background-color: var(--bg-tertiary) !important;
+    }
+
+    .bg-gray-100 {
+      background-color: var(--bg-tertiary) !important;
+    }
+
+    .bg-gray-200 {
+      background-color: var(--bg-tertiary) !important;
+    }
+
+    .bg-gray-300 {
+      background-color: var(--input-border) !important;
+    }
+
+    #previewContent .text-gray-600 {
+      color: var(--text-muted) !important;
+    }
+
+    #previewContent .text-gray-700 {
+      color: var(--text-secondary) !important;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen font-sans">
+  <header class="bg-white shadow-sm border-b border-gray-200">
+    <div class="container mx-auto px-4">
+      <nav class="flex justify-between items-center py-4">
+        <a href="index.html" class="text-2xl font-bold text-gray-800">Pro<span class="text-primary">Folio</span></a>
+        <div class="flex items-center space-x-4">
+          <button id="themeToggle" class="theme-toggle" aria-label="Toggle dark/light mode">
+            <svg xmlns="http://www.w3.org/2000/svg" id="lightIcon" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+            </svg>
+            <svg xmlns="http://www.w3.org/2000/svg" id="darkIcon" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+            </svg>
+          </button>
+          <button id="previewBtn" class="bg-primary hover:bg-primary-dark text-white px-6 py-2 rounded-md transition-all duration-300 shadow-md">Preview Portfolio</button>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container mx-auto py-8 px-4">
+    <div class="max-w-5xl mx-auto">
+      <div class="flex items-center justify-between mb-8">
+        <h1 class="text-3xl font-bold text-gray-800">Build Your Portfolio</h1>
+        <div class="flex space-x-3">
+          <button id="saveBtn" class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-md transition-all duration-300">Save Draft</button>
+          <button id="exportBtn" class="bg-accent hover:bg-accent-dark text-white px-4 py-2 rounded-md transition-all duration-300">Export</button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        <div class="lg:col-span-1">
+          <div class="bg-white rounded-xl shadow-md overflow-hidden">
+            <div class="bg-gray-800 text-white py-4 px-6">
+              <h2 class="font-semibold">Portfolio Sections</h2>
+            </div>
+            <nav class="p-4">
+              <ul class="space-y-2">
+                <li>
+                  <a href="#basic-info" class="nav-link active flex items-center p-2 rounded-md bg-primary/10 text-primary font-medium">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                    Basic Information
+                  </a>
+                </li>
+                <li>
+                  <a href="#skills" class="nav-link flex items-center p-2 rounded-md hover:bg-gray-100 text-gray-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 00-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                    Skills & Technologies
+                  </a>
+                </li>
+                <li>
+                  <a href="#projects" class="nav-link flex items-center p-2 rounded-md hover:bg-gray-100 text-gray-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                    </svg>
+                    Projects
+                  </a>
+                </li>
+                <li>
+                  <a href="#experience" class="nav-link flex items-center p-2 rounded-md hover:bg-gray-100 text-gray-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                    Experience
+                  </a>
+                </li>
+                <li>
+                  <a href="#education" class="nav-link flex items-center p-2 rounded-md hover:bg-gray-100 text-gray-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path d="M12 14l9-5-9-5-9 5 9 5z" />
+                      <path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222" />
+                    </svg>
+                    Education
+                  </a>
+                </li>
+                <li>
+                  <a href="#theme" class="nav-link flex items-center p-2 rounded-md hover:bg-gray-100 text-gray-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+                    </svg>
+                    Theme & Style
+                  </a>
+                </li>
+              </ul>
+            </nav>
+          </div>
+        </div>
+
+        <div class="lg:col-span-3">
+          <div id="basic-info" class="form-section bg-white rounded-xl shadow-md p-6 mb-8" data-aos="fade-up">
+            <h2 class="text-xl font-semibold text-gray-800 mb-6 pb-2 border-b">Basic Information</h2>
+            <div class="space-y-6">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="form-group">
+                  <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                  <input type="text" id="name" class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50 transition-all duration-200">
+                </div>
+                <div class="form-group">
+                  <label for="title" class="block text-sm font-medium text-gray-700 mb-1">Professional Title</label>
+                  <input type="text" id="title" class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50 transition-all duration-200" placeholder="e.g. Frontend Developer">
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <label for="bio" class="block text-sm font-medium text-gray-700 mb-1">Bio / About Me</label>
+                <textarea id="bio" rows="4" class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50 transition-all duration-200" placeholder="Write a short introduction about yourself..."></textarea>
+              </div>
+              
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="form-group">
+                  <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                  <input type="email" id="email" class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50 transition-all duration-200">
+                </div>
+                <div class="form-group">
+                  <label for="website" class="block text-sm font-medium text-gray-700 mb-1">Website or Blog (optional)</label>
+                  <input type="url" id="website" class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50 transition-all duration-200" placeholder="https://example.com">
+                </div>
+              </div>
+              
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Profile Image</label>
+                <div class="mt-1 flex items-center space-x-4">
+                  <div class="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                  </div>
+                  <label class="cursor-pointer inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                    <span>Upload photo</span>
+                    <input type="file" class="sr-only" accept="image/*">
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div id="skills" class="form-section bg-white rounded-xl shadow-md p-6 mb-8" data-aos="fade-up">
+            <h2 class="text-xl font-semibold text-gray-800 mb-6 pb-2 border-b">Skills & Technologies</h2>
+            <div class="space-y-6">
+              <div class="form-group">
+                <label class="block text-sm font-medium text-gray-700 mb-3">Select your skills</label>
+                <div class="flex flex-wrap gap-2 mb-4">
+                  <span class="skill-chip px-3 py-1 bg-primary/10 text-primary rounded-full flex items-center">
+                    HTML
+                    <button class="ml-1 text-primary focus:outline-none">×</button>
+                  </span>
+                  <span class="skill-chip px-3 py-1 bg-primary/10 text-primary rounded-full flex items-center">
+                    CSS
+                    <button class="ml-1 text-primary focus:outline-none">×</button>
+                  </span>
+                  <span class="skill-chip px-3 py-1 bg-primary/10 text-primary rounded-full flex items-center">
+                    JavaScript
+                    <button class="ml-1 text-primary focus:outline-none">×</button>
+                  </span>
+                </div>
+                <div class="flex">
+                  <input type="text" id="skill-input" class="flex-grow rounded-l-md border-gray-300 focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50" placeholder="Add a skill...">
+                  <button id="add-skill" class="px-4 py-2 bg-primary text-white rounded-r-md hover:bg-primary-dark transition-colors duration-300">Add</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="projects" class="form-section bg-white rounded-xl shadow-md p-6 mb-8" data-aos="fade-up">
+            <h2 class="text-xl font-semibold text-gray-800 mb-6 pb-2 border-b">Projects</h2>
+            <div class="space-y-6" id="projects-container">
+              <div class="project-entry bg-gray-50 p-4 rounded-lg border border-gray-200">
+                <div class="flex justify-between items-start mb-4">
+                  <h3 class="text-lg font-medium text-gray-700">Project #1</h3>
+                  <button type="button" class="text-gray-400 hover:text-gray-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  </button>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div class="form-group">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Project Name</label>
+                    <input type="text" class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50">
+                  </div>
+                  
+                  <div class="form-group">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Project URL</label>
+                    <input type="url" class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50" placeholder="https://github.com/yourusername/project">
+                  </div>
+                </div>
+                
+                <div class="form-group mt-4">
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Project Description</label>
+                  <textarea rows="3" class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50"></textarea>
+                </div>
+                
+                <div class="form-group mt-4">
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Technologies Used</label>
+                  <input type="text" class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50" placeholder="e.g. React, Node.js, MongoDB">
+                </div>
+              </div>
+            </div>
+            
+            <button type="button" id="add-project" class="mt-4 flex items-center text-primary font-medium hover:text-primary-dark">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+              </svg>
+              Add Another Project
+            </button>
+          </div>
+
+          <div id="experience" class="form-section bg-white rounded-xl shadow-md p-6 mb-8" data-aos="fade-up">
+            <h2 class="text-xl font-semibold text-gray-800 mb-6 pb-2 border-b">Experience</h2>
+            <div class="space-y-6" id="experience-container">
+              <div class="experience-entry bg-gray-50 p-4 rounded-lg border border-gray-200">
+                <div class="flex justify-between items-start mb-4">
+                  <h3 class="text-lg font-medium text-gray-700">Experience #1</h3>
+                  <button type="button" class="remove-experience text-gray-400 hover:text-gray-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  </button>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div class="form-group">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Company</label>
+                    <input type="text" name="company" class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50">
+                  </div>
+                  
+                  <div class="form-group">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Position</label>
+                    <input type="text" name="position" class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50" placeholder="e.g. Software Developer">
+                  </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                  <div class="form-group">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
+                    <input type="text" name="startDate" class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50" placeholder="e.g. Jan 2020">
+                  </div>
+                  
+                  <div class="form-group">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">End Date</label>
+                    <input type="text" name="endDate" class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50" placeholder="e.g. Present or Dec 2022">
+                  </div>
+                </div>
+                
+                <div class="form-group mt-4">
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                  <textarea name="expDescription" rows="3" class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50" placeholder="Describe your responsibilities and achievements..."></textarea>
+                </div>
+              </div>
+            </div>
+            
+            <button type="button" id="add-experience" class="mt-4 flex items-center text-primary font-medium hover:text-primary-dark">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+              </svg>
+              Add Another Experience
+            </button>
+          </div>
+
+          <div id="education" class="form-section bg-white rounded-xl shadow-md p-6 mb-8" data-aos="fade-up">
+            <h2 class="text-xl font-semibold text-gray-800 mb-6 pb-2 border-b">Education</h2>
+            <div class="space-y-6" id="education-container">
+              <div class="education-entry bg-gray-50 p-4 rounded-lg border border-gray-200">
+                <div class="flex justify-between items-start mb-4">
+                  <h3 class="text-lg font-medium text-gray-700">Education #1</h3>
+                  <button type="button" class="remove-education text-gray-400 hover:text-gray-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  </button>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div class="form-group">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Institution</label>
+                    <input type="text" name="institution" class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50" placeholder="e.g. University of Example">
+                  </div>
+                  
+                  <div class="form-group">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Degree</label>
+                    <input type="text" name="degree" class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50" placeholder="e.g. Bachelor of Science in Computer Science">
+                  </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                  <div class="form-group">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
+                    <input type="text" name="eduStartDate" class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50" placeholder="e.g. Sep 2018">
+                  </div>
+                  
+                  <div class="form-group">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">End Date</label>
+                    <input type="text" name="eduEndDate" class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50" placeholder="e.g. Present or Jun 2022">
+                  </div>
+                </div>
+                
+                <div class="form-group mt-4">
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Description (Optional)</label>
+                  <textarea name="eduDescription" rows="3" class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50" placeholder="Additional information about your studies, achievements, etc."></textarea>
+                </div>
+              </div>
+            </div>
+            
+            <button type="button" id="add-education" class="mt-4 flex items-center text-primary font-medium hover:text-primary-dark">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+              </svg>
+              Add Another Education
+            </button>
+          </div>
+
+          <div id="theme" class="form-section bg-white rounded-xl shadow-md p-6 mb-8" data-aos="fade-up">
+            <h2 class="text-xl font-semibold text-gray-800 mb-6 pb-2 border-b">Theme & Style</h2>
+            <div class="space-y-8">
+              <div>
+                <h3 class="text-lg font-medium text-gray-700 mb-4">Color Scheme</h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div class="form-group">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Primary Color</label>
+                    <div class="flex items-center">
+                      <input type="color" id="primaryColor" value="#4F46E5" class="w-10 h-10 rounded overflow-hidden cursor-pointer border-0">
+                      <input type="text" id="primaryColorHex" value="#4F46E5" class="ml-2 flex-grow rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50 text-sm">
+                    </div>
+                  </div>
+                  
+                  <div class="form-group">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Accent Color</label>
+                    <div class="flex items-center">
+                      <input type="color" id="accentColor" value="#F59E0B" class="w-10 h-10 rounded overflow-hidden cursor-pointer border-0">
+                      <input type="text" id="accentColorHex" value="#F59E0B" class="ml-2 flex-grow rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50 text-sm">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div>
+                <h3 class="text-lg font-medium text-gray-700 mb-4">Layout Style</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div class="relative">
+                    <input type="radio" id="layoutModern" name="layout" value="modern" checked class="sr-only peer">
+                    <label for="layoutModern" class="flex flex-col p-4 border-2 border-gray-200 rounded-lg cursor-pointer transition-all peer-checked:border-primary peer-checked:bg-primary/5">
+                      <div class="w-full h-24 mb-2 bg-gray-100 rounded flex flex-col">
+                        <div class="h-1/3 bg-primary w-full"></div>
+                        <div class="flex-grow p-1 flex">
+                          <div class="w-2/3 bg-gray-200 rounded"></div>
+                          <div class="w-1/3 bg-gray-300 rounded ml-1"></div>
+                        </div>
+                      </div>
+                      <span class="text-center font-medium text-gray-700">Modern</span>
+                    </label>
+                  </div>
+                  
+                  <div class="relative">
+                    <input type="radio" id="layoutMinimal" name="layout" value="minimal" class="sr-only peer">
+                    <label for="layoutMinimal" class="flex flex-col p-4 border-2 border-gray-200 rounded-lg cursor-pointer transition-all peer-checked:border-primary peer-checked:bg-primary/5">
+                      <div class="w-full h-24 mb-2 bg-gray-100 rounded p-2">
+                        <div class="h-1/4 w-full mb-2">
+                          <div class="h-full w-1/3 bg-primary rounded-full"></div>
+                        </div>
+                        <div class="h-3/4 flex">
+                          <div class="w-full bg-gray-200 rounded"></div>
+                        </div>
+                      </div>
+                      <span class="text-center font-medium text-gray-700">Minimal</span>
+                    </label>
+                  </div>
+                  
+                  <div class="relative">
+                    <input type="radio" id="layoutCreative" name="layout" value="creative" class="sr-only peer">
+                    <label for="layoutCreative" class="flex flex-col p-4 border-2 border-gray-200 rounded-lg cursor-pointer transition-all peer-checked:border-primary peer-checked:bg-primary/5">
+                      <div class="w-full h-24 mb-2 bg-gray-100 rounded relative overflow-hidden">
+                        <div class="absolute w-full h-full bg-gradient-to-br from-primary/50 to-accent/50"></div>
+                        <div class="absolute bottom-0 left-0 right-0 h-1/2 bg-white rounded-t-lg p-1">
+                          <div class="w-2/3 h-2 bg-gray-300 rounded-full mb-1"></div>
+                          <div class="w-1/2 h-2 bg-gray-200 rounded-full"></div>
+                        </div>
+                      </div>
+                      <span class="text-center font-medium text-gray-700">Creative</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+              
+              <div>
+                <h3 class="text-lg font-medium text-gray-700 mb-4">Font Style</h3>
+                <div class="form-group">
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Select Font</label>
+                  <select id="fontFamily" class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50">
+                    <option value="Inter, sans-serif" selected>Inter (Default)</option>
+                    <option value="'Poppins', sans-serif">Poppins</option>
+                    <option value="'Roboto', sans-serif">Roboto</option>
+                    <option value="'Montserrat', sans-serif">Montserrat</option>
+                    <option value="'Playfair Display', serif">Playfair Display</option>
+                  </select>
+                </div>
+              </div>
+              
+              <div class="pt-4 border-t border-gray-200">
+                <button type="button" id="previewTheme" class="bg-primary hover:bg-primary-dark text-white font-medium px-4 py-2 rounded-md transition-all duration-300">Preview Changes</button>
+                <button type="button" id="resetTheme" class="ml-2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium px-4 py-2 rounded-md transition-all duration-300">Reset to Default</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div id="previewModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center">
+    <div class="bg-white rounded-lg w-full max-w-4xl max-h-[90vh] overflow-auto">
+      <div class="flex justify-between items-center p-4 border-b">
+        <h3 class="text-lg font-semibold">Portfolio Preview</h3>
+        <button id="closePreview" class="text-gray-500 hover:text-gray-700">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      <div id="previewContent" class="p-6">
+        <div class="text-center mb-8">
+          <div class="w-24 h-24 mx-auto rounded-full bg-gray-200 mb-4" id="preview-image"></div>
+          <h1 class="text-2xl font-bold" id="preview-name">Your Name</h1>
+          <p class="text-gray-600" id="preview-title">Your Title</p>
+          <div class="flex justify-center mt-2 gap-3">
+            <a href="#" id="preview-email" class="text-primary hover:underline hidden">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+              <span id="preview-email-text">email@example.com</span>
+            </a>
+            <a href="#" id="preview-website" class="text-primary hover:underline hidden" target="_blank">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 015.656 0l4 4a4 4 0 01-5.656 5.656l-1.1-1.1" />
+              </svg>
+              <span id="preview-website-text">website.com</span>
+            </a>
+          </div>
+        </div>
+        
+        <div class="mb-8">
+          <h2 class="text-xl font-semibold mb-2">About Me</h2>
+          <div class="bg-gray-50 rounded-lg p-4">
+            <p id="preview-bio" class="text-gray-700">Your bio will appear here.</p>
+          </div>
+        </div>
+        
+        <div class="mb-8" id="preview-skills-section">
+          <h2 class="text-xl font-semibold mb-2">Skills</h2>
+          <div class="bg-gray-50 rounded-lg p-4">
+            <div id="preview-skills" class="flex flex-wrap gap-2">
+            </div>
+          </div>
+        </div>
+        
+        <div class="mb-8" id="preview-projects-section">
+          <h2 class="text-xl font-semibold mb-2">Projects</h2>
+          <div class="space-y-4" id="preview-projects">
+          </div>
+        </div>
+        
+        <div class="mb-8" id="preview-experience-section">
+          <h2 class="text-xl font-semibold mb-2">Experience</h2>
+          <div class="space-y-4" id="preview-experience">
+          </div>
+        </div>
+        
+        <div class="mb-8" id="preview-education-section">
+          <h2 class="text-xl font-semibold mb-2">Education</h2>
+          <div class="space-y-4" id="preview-education">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.4/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.4/ScrollTrigger.min.js"></script>
+  <script src="./scripts/portfolio-builder.js"></script>
+  <script src="./scripts/animations.js"></script>
+  <script>
+    window.addEventListener('error', function(event) {
+      console.error('JavaScript Error:', event.message, 'at', event.filename, 'line', event.lineno);
+    });
+
+    document.addEventListener('click', function(e) {
+      console.log('Clicked on:', e.target);
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('DOM fully loaded - Initializing portfolio builder');
+
+      const basicInfo = document.getElementById('basic-info');
+      if (basicInfo) {
+        console.log("Making basic-info visible immediately");
+        basicInfo.style.display = 'block';
+        basicInfo.style.visibility = 'visible';
+        basicInfo.style.opacity = '1';
+
+        const basicInfoFields = basicInfo.querySelectorAll('input, textarea, select');
+        basicInfoFields.forEach(field => {
+          field.style.display = 'block';
+          field.style.visibility = 'visible';
+          field.style.opacity = '1';
+        });
+      }
+
+      const navLinks = document.querySelectorAll('.nav-link');
+      
+      navLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+          e.preventDefault();
+          const targetId = link.getAttribute('href').substring(1);
+          console.log('Navigation clicked for:', targetId);
+
+          if (targetId === 'basic-info') {
+            console.log('Basic info is always visible, just activating the link');
+            highlightNavLink(link);
+            return;
+          }
+
+          const targetSection = document.getElementById(targetId);
+          if (targetSection) {
+            const isVisible = getComputedStyle(targetSection).display !== 'none';
+            console.log(`Section ${targetId} is currently ${isVisible ? 'visible' : 'hidden'}`);
+            
+            if (isVisible) {
+              targetSection.style.display = 'none';
+              targetSection.style.visibility = 'hidden';
+              targetSection.style.opacity = '0';
+
+              link.classList.remove('active', 'bg-primary/10', 'text-primary');
+              link.classList.add('hover:bg-gray-100', 'text-gray-700');
+            } else {
+              targetSection.style.display = 'block';
+              targetSection.style.visibility = 'visible';
+              targetSection.style.opacity = '1';
+
+              highlightNavLink(link);
+            }
+          }
+        });
+      });
+
+      function highlightNavLink(link) {
+        navLinks.forEach(navLink => {
+          if (navLink.getAttribute('href') !== '#basic-info') {
+            navLink.classList.remove('active', 'bg-primary/10', 'text-primary');
+            navLink.classList.add('hover:bg-gray-100', 'text-gray-700');
+          }
+        });
+
+        link.classList.add('active', 'bg-primary/10', 'text-primary');
+        link.classList.remove('hover:bg-gray-100', 'text-gray-700');
+      }
+
+      const basicInfoLink = document.querySelector('a[href="#basic-info"]');
+      if (basicInfoLink) {
+        basicInfoLink.classList.add('active', 'bg-primary/10', 'text-primary');
+        basicInfoLink.classList.remove('hover:bg-gray-100', 'text-gray-700');
+      }
+
+      const testButtons = [
+        { id: 'previewBtn', name: 'Preview Button' },
+        { id: 'saveBtn', name: 'Save Button' },
+        { id: 'exportBtn', name: 'Export Button' },
+        { id: 'add-skill', name: 'Add Skill Button' },
+        { id: 'add-project', name: 'Add Project Button' },
+        { id: 'add-experience', name: 'Add Experience Button' },
+        { id: 'add-education', name: 'Add Education Button' }
+      ];
+      
+      testButtons.forEach(button => {
+        const el = document.getElementById(button.id);
+        if (el) {
+          console.log(`${button.name} (${button.id}) found`);
+        } else {
+          console.warn(`${button.name} (${button.id}) NOT found`);
+        }
+      });
+ 
+      const previewBtn = document.getElementById('previewBtn');
+      if (previewBtn) {
+        previewBtn.addEventListener('click', function() {
+          console.log("Preview button clicked directly");
+          const previewModal = document.getElementById('previewModal');
+          if (previewModal) {
+            previewModal.classList.remove('hidden');
+            if (window.portfolioBuilder && typeof window.portfolioBuilder.previewPortfolio === 'function') {
+              window.portfolioBuilder.previewPortfolio();
+            }
+          }
+        });
+      }
+
+      const closePreviewBtn = document.getElementById('closePreview');
+      if (closePreviewBtn) {
+        closePreviewBtn.addEventListener('click', function() {
+          console.log("Close preview button clicked directly");
+          const previewModal = document.getElementById('previewModal');
+          if (previewModal) {
+            previewModal.classList.add('hidden');
+          }
+        });
+      }
+
+      const addSkillBtn = document.getElementById('add-skill');
+      const skillInput = document.getElementById('skill-input');
+      
+      if (addSkillBtn && skillInput) {
+        addSkillBtn.addEventListener('click', function() {
+          console.log("Add skill button clicked directly");
+          
+          if (window.portfolioBuilder && typeof window.portfolioBuilder.addSkill === 'function') {
+            window.portfolioBuilder.addSkill();
+          } else {
+
+            const skill = skillInput.value.trim();
+            if (skill) {
+              const skillsContainer = document.querySelector('.flex.flex-wrap.gap-2.mb-4');
+              if (skillsContainer) {
+                const skillChip = document.createElement('span');
+                skillChip.className = 'skill-chip px-3 py-1 bg-primary/10 text-primary rounded-full flex items-center';
+                skillChip.innerHTML = `${skill}<button class="ml-1 text-primary focus:outline-none">×</button>`;
+                
+                skillsContainer.appendChild(skillChip);
+                skillInput.value = '';
+              }
+            }
+          }
+        });
+      }
+    });
+
+    window.onload = function() {
+      const basicInfo = document.getElementById('basic-info');
+      if (basicInfo) {
+        console.log("EMERGENCY: Forcing basic-info visible");
+        basicInfo.style.cssText = "display: block !important; visibility: visible !important; opacity: 1 !important;";
+        const basicInfoFields = basicInfo.querySelectorAll('input, textarea, select');
+        basicInfoFields.forEach(field => {
+          field.style.cssText = "display: block !important; visibility: visible !important; opacity: 1 !important; z-index: 99 !important;";
+        });
+      }
+    };
+
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('CRITICAL FIXES: Forcing basic-info visibility');
+
+      const basicInfoSection = document.getElementById('basic-info');
+      if (basicInfoSection) {
+        basicInfoSection.setAttribute('style', 'display: block !important; visibility: visible !important; opacity: 1 !important; z-index: 10 !important;');
+        console.log('Applied emergency styles to basic-info section');
+      } else {
+        console.error('Critical error: basic-info section not found!');
+      }
+
+      const basicInfoFields = document.querySelectorAll('#basic-info input, #basic-info textarea, #basic-info select, #basic-info label');
+      basicInfoFields.forEach((field, index) => {
+        field.setAttribute('style', 'display: block !important; visibility: visible !important; opacity: 1 !important; z-index: 20 !important;');
+      });
+      console.log(`Made ${basicInfoFields.length} form fields visible in basic-info section`);
+
+      const basicInfoLink = document.querySelector('a[href="#basic-info"]');
+      if (basicInfoLink) {
+        basicInfoLink.addEventListener('click', function(e) {
+          e.preventDefault();
+          console.log('Basic info link clicked - ensuring visibility');
+
+          if (basicInfoSection) {
+            basicInfoSection.style.display = 'block';
+            basicInfoSection.style.visibility = 'visible';
+            basicInfoSection.style.opacity = '1';
+          }
+
+          document.querySelectorAll('.nav-link').forEach(link => {
+            link.classList.remove('active', 'bg-primary/10', 'text-primary');
+            link.classList.add('hover:bg-gray-100', 'text-gray-700');
+          });
+          
+          basicInfoLink.classList.add('active', 'bg-primary/10', 'text-primary');
+          basicInfoLink.classList.remove('hover:bg-gray-100', 'text-gray-700');
+        });
+      }
+    });
+ 
+    setTimeout(function() {
+      const basicInfo = document.getElementById('basic-info');
+      if (basicInfo) {
+        console.log('BACKUP TIMER: Forcing basic-info visible');
+        basicInfo.style.display = 'block';
+        basicInfo.style.visibility = 'visible'; 
+        basicInfo.style.opacity = '1';
+
+        Array.from(basicInfo.getElementsByTagName('*')).forEach(el => {
+          if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT' || el.tagName === 'LABEL') {
+            el.style.display = 'block';
+            el.style.visibility = 'visible';
+            el.style.opacity = '1';
+          }
+        });
+      }
+    }, 500);
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const themeToggle = document.getElementById('themeToggle');
+      const lightIcon = document.getElementById('lightIcon');
+      const darkIcon = document.getElementById('darkIcon');
+
+      const savedTheme = localStorage.getItem('theme');
+      if (!savedTheme || savedTheme === 'dark') {
+        document.body.classList.remove('light-mode');
+        lightIcon.classList.remove('hidden');
+        darkIcon.classList.add('hidden');
+        localStorage.setItem('theme', 'dark');
+      } else if (savedTheme === 'light') {
+        document.body.classList.add('light-mode');
+        lightIcon.classList.add('hidden');
+        darkIcon.classList.remove('hidden');
+      }
+      
+      themeToggle.addEventListener('click', function() {
+        const isLightMode = document.body.classList.contains('light-mode');
+        
+        if (isLightMode) {
+          document.body.classList.remove('light-mode');
+          lightIcon.classList.remove('hidden');
+          darkIcon.classList.add('hidden');
+          localStorage.setItem('theme', 'dark');
+        } else {
+          document.body.classList.add('light-mode');
+          lightIcon.classList.add('hidden');
+          darkIcon.classList.remove('hidden');
+          localStorage.setItem('theme', 'light');
+        }
+      });
+    });
+  </script>
+</body>
+</html>
